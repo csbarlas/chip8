@@ -4,7 +4,7 @@ project(chip8 VERSION 0.1.0)
 include(CTest)
 enable_testing()
 
-add_executable(chip8 main.cpp Machine.cpp)
+add_executable(chip8 main.cpp Machine.cpp ROM.cpp)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

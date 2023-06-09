@@ -1,12 +1,11 @@
 #include "Machine.hpp"
 #include <iostream>
-#include <cstddef>
 #include <bitset>
 #include <iomanip>
 
-Machine::Machine() {}
-
 using namespace std;
+
+Machine::Machine() {}
 
 void Machine::print_state() {
     print_registers();
