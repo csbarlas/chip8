@@ -1,6 +1,8 @@
 #pragma once
 #include <bitset>
 
+#include "ROM.hpp"
+
 #define MEMORY_SIZE 4096
 #define NUM_REGISTERS 16
 #define BYTE_SIZE 8
@@ -27,4 +29,5 @@ class Machine {
     public:
         Machine();
         void print_state();
+        void load_rom(ROM rom);
 };

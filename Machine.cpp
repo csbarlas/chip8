@@ -42,3 +42,7 @@ void Machine::print_memory_table_entry(int row, int col) {
     int entry = row + (col * MEMORY_TABLE_ROWS);
     std::cout << std::setfill('0') << std::setw(3) << std::hex << entry << ": " << memory[entry];
 }
+
+void Machine::load_rom(ROM rom) {
+    
+}
