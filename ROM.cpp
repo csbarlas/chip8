@@ -36,7 +36,8 @@ void ROM::open_and_size_rom() {
 void ROM::rom_disk_to_mem() {
     char temp_store[rom_size];
 
-    rom_binary.resize(rom_size * 8);
+    //rom_binary.resize(rom_size * 8);
+    data.resize(rom_size);
 
     file.read(temp_store, rom_size);
 
@@ -49,13 +50,15 @@ void ROM::rom_disk_to_mem() {
         bitset<8> b(temp_store[i]);
         // j = bit in byte
         for(int j = 0; j < 8; j++) {
-            if(b.test(8 - j - 1)) rom_binary.set(bitpos);
+            if(b.test(8 - j - 1)) data.at(i).set(8 - j - 1);
             bitpos -= 1;
         }
     }
 
-    cout << "ROM Binary:" << endl;
-    cout << rom_binary << endl;
+    cout << "ROM Data:" << endl;
+    for (auto &byte : data) {
+        cout << byte << std::endl;
+    }
 }
 
 void ROM::close_file() {

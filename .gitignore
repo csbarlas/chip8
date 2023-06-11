@@ -11,3 +11,5 @@ CTestTestfile.cmake
 _deps
 build/
 roms/
+.vscode/launch.json
+.vscode/tasks.json

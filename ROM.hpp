@@ -3,13 +3,14 @@
 #include <boost/dynamic_bitset.hpp>
 #include <fstream>
 #include <iostream>
+#include <vector>
 
 class ROM {
     public:
         ROM(std::string path);
 
     private:
-        boost::dynamic_bitset<> rom_binary;
+        std::vector<std::bitset<8>> data;
         std::string rom_path;
         int rom_size;
         std::ifstream file;
