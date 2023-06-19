@@ -2,10 +2,17 @@
 #include <fstream>
 #include <boost/dynamic_bitset.hpp>
 #include "ROM.hpp"
+#include <bitset>
+#include <iomanip>
+#include <math.h>
+#include <cmath>
 
 using namespace std;
 
 ROM::ROM(std::string path) {
+    //Member init
+    seekPosition = 0;
+
     rom_path = path;
     open_and_size_rom();
     rom_disk_to_mem();
@@ -29,7 +36,8 @@ void ROM::open_and_size_rom() {
     end = file.tellg();
 
     rom_size = end - start;
-    cout << "ROM size is: " << rom_size << " bytes." << endl;
+    cout << "ROM size is: " << std::dec << rom_size << " bytes." << endl;
+    calculate_rom_addr_max_size();
     file.seekg(0, ios::beg);
 }
 
@@ -54,13 +62,50 @@ void ROM::rom_disk_to_mem() {
             bitpos -= 1;
         }
     }
-
-    cout << "ROM Data:" << endl;
-    for (auto &byte : data) {
-        cout << byte << std::endl;
-    }
 }
 
 void ROM::close_file() {
-    if(file_did_open) file.close();
+    if(file_did_open) { 
+        file.close();
+        cout << "ROM reading complete." << endl;
+    }
+}
+
+std::bitset<8> ROM::get_byte(int byte) {
+    return data.at(byte);
+}
+
+int ROM::size() {
+    return rom_size;
+}
+
+void ROM::print_rom() {
+    calculate_print_rows();
+
+    cout << "ROM contents: " << endl;
+    for(int row = 0; row < print_rows; row++) {
+        for(int col = 0; col < PRINT_COLS - 1; col++) {
+            print_data_table_entry(row, col);
+            cout << " | ";
+        }
+        print_data_table_entry(row, PRINT_COLS - 1);
+        cout << endl;
+    }
+}
+
+void ROM::print_data_table_entry(int row, int col) {
+    int entry = row + (col * print_rows);
+    if(entry < rom_size) {
+        std::cout << std::setfill('0') << std::setw(rom_addr_max_size) << uppercase << std::hex << entry << ": " << setfill('0') << setw(2) << uppercase << hex << data[entry].to_ulong();
+    } else {
+        std::cout << std::setfill('0') << std::setw(rom_addr_max_size) << uppercase << std::hex << entry << ": XX";
+    }
+}
+
+void ROM::calculate_rom_addr_max_size() {
+    rom_addr_max_size = (int) ceil(log(rom_size) / log(16));
+}
+
+void ROM::calculate_print_rows() {
+    print_rows = ceil((double)rom_size / PRINT_COLS);
 }
