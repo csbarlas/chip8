@@ -9,6 +9,7 @@
 #define WORD_SIZE 16
 #define MEMORY_TABLE_COLS 8 //Must be in a power of 2
 #define MEMORY_TABLE_ROWS MEMORY_SIZE / MEMORY_TABLE_COLS
+#define INITIAL_LOAD_ADDR 0x200
 
 using namespace std;
 
@@ -29,5 +30,5 @@ class Machine {
     public:
         Machine();
         void print_state();
-        void load_rom(ROM rom);
+        void load_rom(ROM &rom);
 };

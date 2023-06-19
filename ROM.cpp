@@ -36,7 +36,7 @@ void ROM::open_and_size_rom() {
     end = file.tellg();
 
     rom_size = end - start;
-    cout << "ROM size is: " << rom_size << " bytes." << endl;
+    cout << "ROM size is: " << std::dec << rom_size << " bytes." << endl;
     calculate_rom_addr_max_size();
     file.seekg(0, ios::beg);
 }
@@ -65,7 +65,10 @@ void ROM::rom_disk_to_mem() {
 }
 
 void ROM::close_file() {
-    if(file_did_open) file.close();
+    if(file_did_open) { 
+        file.close();
+        cout << "ROM reading complete." << endl;
+    }
 }
 
 std::bitset<8> ROM::get_byte(int byte) {
@@ -78,6 +81,8 @@ int ROM::size() {
 
 void ROM::print_rom() {
     calculate_print_rows();
+
+    cout << "ROM contents: " << endl;
     for(int row = 0; row < print_rows; row++) {
         for(int col = 0; col < PRINT_COLS - 1; col++) {
             print_data_table_entry(row, col);

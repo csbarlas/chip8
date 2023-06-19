@@ -8,6 +8,7 @@ using namespace std;
 Machine::Machine() {}
 
 void Machine::print_state() {
+    cout << "Machine state: " << endl;
     print_registers();
     print_memory();
 }
@@ -40,9 +41,15 @@ void Machine::print_memory() {
 
 void Machine::print_memory_table_entry(int row, int col) {
     int entry = row + (col * MEMORY_TABLE_ROWS);
-    std::cout << std::setfill('0') << std::setw(3) << std::hex << entry << ": " << memory[entry];
+    std::cout << std::setfill('0') << std::setw(3) << std::hex << entry << ": " << setfill('0') << setw(2) << hex << memory[entry].to_ulong();
 }
 
-void Machine::load_rom(ROM rom) {
-    
+void Machine::load_rom(ROM &rom) {
+    int rom_size = rom.size();
+    int load_addr = INITIAL_LOAD_ADDR;
+    for(int i = 0; i < rom_size; i++) {
+        memory[load_addr] = (int) rom.get_byte(i).to_ulong();
+        load_addr++;
+    }
+    pc = 0x200;
 }
