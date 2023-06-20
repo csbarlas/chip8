@@ -1,11 +1,13 @@
+# Tutorial for using CMake and GTest:
+# https://raymii.org/s/tutorials/Cpp_project_setup_with_cmake_and_unit_tests.html#toc_1
+
 cmake_minimum_required(VERSION 3.0.0)
 project(chip8 VERSION 0.1.0)
 
-include(CTest)
-enable_testing()
+set(CMAKE_CXX_STANDARD 14)
 
-add_executable(chip8 main.cpp Machine.cpp ROM.cpp)
+include_directories(src)
 
-set(CPACK_PROJECT_NAME ${PROJECT_NAME})
-set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
-include(CPack)
+add_subdirectory(src)
+add_subdirectory(test)
+add_subdirectory(lib/googletest)
