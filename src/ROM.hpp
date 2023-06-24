@@ -15,6 +15,7 @@ class ROM {
         std::bitset<8> get_byte(int byte);
         int size();
         void print_rom();
+        std::string to_string();
 
     private:
         std::vector<std::bitset<8>> data;
@@ -32,4 +33,5 @@ class ROM {
         void print_data_table_entry(int row, int col);
         void calculate_rom_addr_max_size();
         void calculate_print_rows();
+        std::string long_to_hex(ulong value);
 };

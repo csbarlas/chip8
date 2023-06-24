@@ -6,6 +6,10 @@
 #include <iomanip>
 #include <math.h>
 #include <cmath>
+#include <stdexcept>
+#include <string>
+#include <cstring>
+#include <sstream>
 
 using namespace std;
 
@@ -27,7 +31,7 @@ void ROM::open_and_size_rom() {
 
     if(file.fail()) {
         cout << "Failed to open ROM " << rom_path << endl;
-        return;
+        throw std::runtime_error("Could not open file.");
     }
     else if (file.good()) file_did_open = true;
 
@@ -108,4 +112,22 @@ void ROM::calculate_rom_addr_max_size() {
 
 void ROM::calculate_print_rows() {
     print_rows = ceil((double)rom_size / PRINT_COLS);
+}
+
+std::string ROM::to_string() {
+    std::string str;
+
+    for (auto byte : data) {
+        str.append(long_to_hex(byte.to_ulong()));
+    }
+
+    cout << str << endl;
+    return str;
+}
+
+// Source: https://stackoverflow.com/questions/5100718/integer-to-hex-string-in-c
+std::string ROM::long_to_hex(ulong value) {
+    std::stringstream stream;
+    stream << std::setfill('0') << std::setw(2) << std::uppercase << std::hex << value;
+    return stream.str();
 }

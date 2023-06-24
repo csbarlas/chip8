@@ -31,4 +31,6 @@ class Machine {
         Machine();
         void print_state();
         void load_rom(ROM &rom);
+        bitset<BYTE_SIZE> getMemoryState();
+        
 };
