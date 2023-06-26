@@ -2,6 +2,7 @@
 #include <bitset>
 
 #include "ROM.hpp"
+#include "Executor.hpp"
 
 #define MEMORY_SIZE 4096
 #define NUM_REGISTERS 16
@@ -23,14 +24,16 @@ class Machine {
         bitset<BYTE_SIZE> sp;
         bitset<WORD_SIZE> pc;
 
-        void print_registers();
-        void print_memory();
-        void print_memory_table_entry(int row, int col);
+        void print_registers() const;
+        void print_memory() const;
+        void print_memory_table_entry(int row, int col) const;
+
+        Executor executor;
 
     public:
         Machine();
-        void print_state();
+        void print_state() const;
         void load_rom(ROM &rom);
         bitset<BYTE_SIZE> getMemoryState();
-        
+        void run();
 };
