@@ -2,7 +2,6 @@
 #include <bitset>
 
 #include "ROM.hpp"
-#include "Executor.hpp"
 
 #define MEMORY_SIZE 4096
 #define NUM_REGISTERS 16
@@ -14,6 +13,8 @@
 
 using namespace std;
 
+class Executor;
+
 class Machine {
     private:
         bitset<BYTE_SIZE> memory[MEMORY_SIZE];
@@ -24,11 +25,12 @@ class Machine {
         bitset<BYTE_SIZE> sp;
         bitset<WORD_SIZE> pc;
 
-        void print_registers() const;
         void print_memory() const;
         void print_memory_table_entry(int row, int col) const;
+        void pc_to_next_instruction();
+        
 
-        Executor executor;
+        Executor *executor;
 
     public:
         Machine();
@@ -36,4 +38,7 @@ class Machine {
         void load_rom(ROM &rom);
         bitset<BYTE_SIZE> getMemoryState();
         void run();
+        void print_registers() const;
+        bitset<WORD_SIZE> next_byte_to_pc();
+        bitset<WORD_SIZE> next_instruction();
 };

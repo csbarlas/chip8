@@ -13,8 +13,9 @@ int main(int, char**) {
     // test_rom.print_rom();
     machine.load_rom(test_rom);
     // machine.print_state();
- 
-    std::bitset<16> b("0000000011101110");
-    Executor e(machine);
-    e.execute(b);
+    machine.print_registers();
+
+    std::cout << "Next instruction is: " << std::hex << machine.next_instruction().to_ulong() << std::endl;
+    std::cout << "Next instruction is: " << std::hex << machine.next_instruction().to_ulong() << std::endl;
+    std::cout << "Next instruction is: " << std::hex << machine.next_instruction().to_ulong() << std::endl;
 }

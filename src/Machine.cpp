@@ -7,7 +7,8 @@
 using namespace std;
 
 Machine::Machine() {
-    Executor executor(*this);
+    Executor temp(*this);
+    executor = &temp;
 }
 
 void Machine::print_state() const {
@@ -58,5 +59,29 @@ void Machine::load_rom(ROM &rom) {
 }
 
 void Machine::run(){
-    
+    while (true) {
+        
+    }
+}
+
+bitset<WORD_SIZE> Machine::next_instruction() {
+    bitset<BYTE_SIZE> upper = memory[pc.to_ulong()];
+    auto pc_offset_one_byte = next_byte_to_pc().to_ulong();
+    bitset<BYTE_SIZE> lower = memory[pc_offset_one_byte];
+    pc_to_next_instruction();
+    bitset<WORD_SIZE> ret((upper.to_ulong() << 8) + lower.to_ulong());
+    return ret;
+}
+
+bitset<WORD_SIZE> Machine::next_byte_to_pc() {
+    ulong temp_pc = pc.to_ulong();
+    temp_pc++;
+    bitset<WORD_SIZE> ret(temp_pc);
+    return ret;
+}
+
+void Machine::pc_to_next_instruction() {
+    ulong temp_pc = pc.to_ulong();
+    temp_pc += 2;
+    pc = temp_pc;
 }

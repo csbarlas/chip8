@@ -23,7 +23,7 @@ void Executor::execute(const std::bitset<16>& instr) {
 void Executor::exec_opcode_zero(const std::bitset<16>& instr) {
     std::string three_lsb = bytes_to_str(instr, 0, 2);
     if (three_lsb == "0E0") exec_clear_screen(instr);
-    else if (three_lsb == "0EE") exec_ret_from_subroutine(instr);
+    else if (three_lsb == "0EE") return; //exec_ret_from_subroutine(instr);
     else exec_subroutine(instr);
 }
 

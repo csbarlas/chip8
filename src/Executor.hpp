@@ -2,10 +2,11 @@
 #include <bitset>
 #include <functional>
 #include <array>
-#include "Machine.hpp"
 
 #define NUM_EXECUTE_FUNCS 10
 #define NUM_ZERO_OPCODES 3
+
+class Machine;
 
 class Executor {
     public:
