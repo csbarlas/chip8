@@ -7,8 +7,8 @@
 using namespace std;
 
 Machine::Machine() {
-    Executor temp(*this);
-    executor = &temp;
+    executor = new Executor(this);
+    exit = false;
 }
 
 void Machine::print_state() const {
@@ -59,16 +59,18 @@ void Machine::load_rom(ROM &rom) {
 }
 
 void Machine::run(){
-    while (true) {
-        
+    while (!exit) {
+        auto currentInstruction = get_next_instruction();
+        executor->execute(currentInstruction);
     }
+
+    std::cout << "exiting..." << std::endl;
 }
 
-bitset<WORD_SIZE> Machine::next_instruction() {
+bitset<WORD_SIZE> Machine::get_next_instruction() {
     bitset<BYTE_SIZE> upper = memory[pc.to_ulong()];
     auto pc_offset_one_byte = next_byte_to_pc().to_ulong();
     bitset<BYTE_SIZE> lower = memory[pc_offset_one_byte];
-    pc_to_next_instruction();
     bitset<WORD_SIZE> ret((upper.to_ulong() << 8) + lower.to_ulong());
     return ret;
 }
@@ -84,4 +86,8 @@ void Machine::pc_to_next_instruction() {
     ulong temp_pc = pc.to_ulong();
     temp_pc += 2;
     pc = temp_pc;
+}
+
+void Machine::set_exit_flag() {
+    exit = true;
 }

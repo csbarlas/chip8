@@ -24,13 +24,10 @@ class Machine {
         bitset<BYTE_SIZE> sound_timer;
         bitset<BYTE_SIZE> sp;
         bitset<WORD_SIZE> pc;
-
         void print_memory() const;
         void print_memory_table_entry(int row, int col) const;
-        void pc_to_next_instruction();
-        
-
         Executor *executor;
+        bool exit;
 
     public:
         Machine();
@@ -40,5 +37,7 @@ class Machine {
         void run();
         void print_registers() const;
         bitset<WORD_SIZE> next_byte_to_pc();
-        bitset<WORD_SIZE> next_instruction();
+        bitset<WORD_SIZE> get_next_instruction();
+        void pc_to_next_instruction();
+        void set_exit_flag();
 };

@@ -7,15 +7,17 @@
 
 Machine machine;
 
-int main(int, char**) {
-    // machine.print_state();
-    ROM test_rom("../roms/pong.rom");
-    // test_rom.print_rom();
-    machine.load_rom(test_rom);
-    // machine.print_state();
-    machine.print_registers();
+int main(int argc, char *argv[]) {
+    if(argc == 1) {
+        // ROM test_rom("../roms/pong.rom");
+        // machine.load_rom(test_rom);
+        machine.pc_to_next_instruction();
+    } else if (argc == 2) {
+        ROM test_rom(argv[1]);
+        machine.load_rom(test_rom);
+    } else {
+        throw std::runtime_error("Unsupported number of command line arguments given.");
+    }
 
-    std::cout << "Next instruction is: " << std::hex << machine.next_instruction().to_ulong() << std::endl;
-    std::cout << "Next instruction is: " << std::hex << machine.next_instruction().to_ulong() << std::endl;
-    std::cout << "Next instruction is: " << std::hex << machine.next_instruction().to_ulong() << std::endl;
+    machine.run();
 }
