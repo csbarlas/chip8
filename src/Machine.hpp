@@ -40,4 +40,5 @@ class Machine {
         bitset<WORD_SIZE> get_next_instruction();
         void pc_to_next_instruction();
         void set_exit_flag();
+        void set_pc(int addr);
 };

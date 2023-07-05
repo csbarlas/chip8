@@ -91,3 +91,7 @@ void Machine::pc_to_next_instruction() {
 void Machine::set_exit_flag() {
     exit = true;
 }
+
+void Machine::set_pc(int addr) {
+    pc = addr;
+}

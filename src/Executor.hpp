@@ -19,5 +19,7 @@ class Executor {
         void exec_clear_screen(const std::bitset<16>& instr);
         void exec_ret_from_subroutine(const std::bitset<16>& instr);
         void exec_exit(const std::bitset<16>& instr);
+        void exec_jump(const std::bitset<16>& instr);
+        int bytes_to_int(const std::bitset<16>& instr, int from, int to);
         std::string bytes_to_str(const std::bitset<16>& instr, int from, int to) const; 
 };

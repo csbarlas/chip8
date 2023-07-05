@@ -8,6 +8,8 @@
 Machine machine;
 
 int main(int argc, char *argv[]) {
+    machine.print_registers();
+
     if(argc == 1) {
         // ROM test_rom("../roms/pong.rom");
         // machine.load_rom(test_rom);
@@ -20,4 +22,6 @@ int main(int argc, char *argv[]) {
     }
 
     machine.run();
+
+    machine.print_registers();
 }
