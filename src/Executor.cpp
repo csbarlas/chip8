@@ -51,9 +51,11 @@ void Executor::execute(const std::bitset<16>& instr) {
             break;
         case 1:
             exec_jump(instr);
+            break;
         default:
             std::cout << "Unimplemented opcode for " << std::hex << instr.to_ulong() << std::endl;
             machine->set_exit_flag();
+            break;
     }
 }
 
@@ -66,6 +68,7 @@ void Executor::exec_opcode_zero(const std::bitset<16>& instr) {
     if (three_lsb == "0E0") exec_clear_screen(instr);
     else if (three_lsb == "0EE") exec_ret_from_subroutine(instr);
     else if (three_lsb == "0FD") exec_exit(instr);
+    else if (three_lsb == "000") machine->set_exit_flag(); //probably executing arbitrary memory... abort!
     else exec_subroutine(instr);
 }
 
@@ -110,6 +113,7 @@ void Executor::exec_exit(const std::bitset<16>& instr){
 }
 
 void Executor::exec_jump(const std::bitset<16>& instr){
+    std::cout << "hello from jump!" << std::endl;
     int addr = bytes_to_int(instr, 0, 2);
     machine->set_pc(addr);
 }

@@ -41,4 +41,5 @@ class Machine {
         void pc_to_next_instruction();
         void set_exit_flag();
         void set_pc(int addr);
+        std::string pc_to_string();
 };

@@ -10,6 +10,6 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 build/
-roms/
+/roms/
 .vscode/launch.json
 .vscode/tasks.json

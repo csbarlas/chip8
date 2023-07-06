@@ -3,6 +3,7 @@
 #include <iostream>
 #include <bitset>
 #include <iomanip>
+#include <sstream>
 
 using namespace std;
 
@@ -61,6 +62,7 @@ void Machine::load_rom(ROM &rom) {
 void Machine::run(){
     while (!exit) {
         auto currentInstruction = get_next_instruction();
+        std::cout << "now executing: " << std::setfill('0') << std::setw(4) << std::uppercase << std::hex << currentInstruction.to_ulong() << std::endl;
         executor->execute(currentInstruction);
     }
 
@@ -94,4 +96,10 @@ void Machine::set_exit_flag() {
 
 void Machine::set_pc(int addr) {
     pc = addr;
+}
+
+std::string Machine::pc_to_string() {
+    std::stringstream stream;
+    stream << std::setfill('0') << std::setw(4) << std::uppercase << std::hex << pc.to_ulong();
+    return stream.str();
 }

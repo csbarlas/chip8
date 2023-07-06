@@ -23,5 +23,5 @@ int main(int argc, char *argv[]) {
 
     machine.run();
 
-    machine.print_registers();
+    //machine.print_registers();
 }
