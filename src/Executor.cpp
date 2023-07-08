@@ -52,6 +52,9 @@ void Executor::execute(const std::bitset<16>& instr) {
         case 1:
             exec_jump(instr);
             break;
+        case 2:
+            exec_call(instr);
+            break;
         default:
             std::cout << "Unimplemented opcode for " << std::hex << instr.to_ulong() << std::endl;
             machine->set_exit_flag();
@@ -79,7 +82,7 @@ void Executor::exec_opcode_zero(const std::bitset<16>& instr) {
 */
 void Executor::exec_subroutine(const std::bitset<16>& instr) {
     std::cout << "hello from exec subroutine!" << std::endl;
-    machine->pc_to_next_instruction();
+    machine->advance_pc();
 }
 
 /*
@@ -89,7 +92,7 @@ void Executor::exec_subroutine(const std::bitset<16>& instr) {
 */
 void Executor::exec_clear_screen(const std::bitset<16>& instr) {
     std::cout << "hello from clear screen!" << std::endl;
-    machine->pc_to_next_instruction();
+    machine->advance_pc();
 }
 
 /*
@@ -99,7 +102,7 @@ void Executor::exec_clear_screen(const std::bitset<16>& instr) {
 */
 void Executor::exec_ret_from_subroutine(const std::bitset<16>& instr) {
     std::cout << "hello from ret!" << std::endl;
-    machine->pc_to_next_instruction();
+    machine->advance_pc();
 }
 
 /*
@@ -112,8 +115,43 @@ void Executor::exec_exit(const std::bitset<16>& instr){
     machine->set_exit_flag();
 }
 
+
+/*
+    Format: 0x1nnn
+    ASM: JP addr
+    Desc: Sets PC to nnn
+*/
 void Executor::exec_jump(const std::bitset<16>& instr){
     std::cout << "hello from jump!" << std::endl;
     int addr = bytes_to_int(instr, 0, 2);
     machine->set_pc(addr);
+}
+
+/*
+    Format: 2nnn
+    ASM: CALL addr
+    Desc: Sets pc to nnn and saves current PC on the stack
+*/
+void Executor::exec_call(const std::bitset<16>& instr) {
+    auto current_pc = machine->get_pc();
+    machine->push_to_stack(current_pc);
+    int addr_int = bytes_to_int(instr, 0, 2);
+    machine->set_pc(addr_int);
+}
+
+/*
+    Format: 3xkk
+    ASM: SE Vx, byte
+    Desc: Skip next instruction if Vx = kk
+*/
+void Executor::exec_skip_equal_byte(const std::bitset<16>& instr) {
+    int reg_index = bytes_to_int(instr, 2, 2);
+    int reg_val = (int) machine->read_register(reg_index).to_ulong();
+    int byte_val = bytes_to_int(instr, 0, 1);
+    if(byte_val == reg_val) {
+        //skip next instr
+        machine->advance_pc();
+    }
+    //always advance regardless
+    machine->advance_pc();
 }

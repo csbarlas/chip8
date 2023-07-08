@@ -9,7 +9,6 @@ using namespace std;
 
 Machine::Machine() {
     executor = new Executor(this);
-    exit = false;
 }
 
 void Machine::print_state() const {
@@ -27,7 +26,6 @@ void Machine::print_registers() const{
     cout << setw(13) << "Vi: " << vi << endl;
     cout << "delay timer: " << delay_timer << endl;
     cout << "sound timer: " << sound_timer << endl;
-    cout << setw(13) << "stack ptr: " << sp << endl;
     cout << setw(13) << "pc: " << pc << endl;
 }
 
@@ -57,11 +55,13 @@ void Machine::load_rom(ROM &rom) {
         load_addr++;
     }
     pc = 0x200;
+    exit = false;
+    sp = 0;
 }
 
 void Machine::run(){
     while (!exit) {
-        auto currentInstruction = get_next_instruction();
+        auto currentInstruction = get_current_instruction();
         std::cout << "now executing: " << std::setfill('0') << std::setw(4) << std::uppercase << std::hex << currentInstruction.to_ulong() << std::endl;
         executor->execute(currentInstruction);
     }
@@ -69,7 +69,7 @@ void Machine::run(){
     std::cout << "exiting..." << std::endl;
 }
 
-bitset<WORD_SIZE> Machine::get_next_instruction() {
+bitset<WORD_SIZE> Machine::get_current_instruction() {
     bitset<BYTE_SIZE> upper = memory[pc.to_ulong()];
     auto pc_offset_one_byte = next_byte_to_pc().to_ulong();
     bitset<BYTE_SIZE> lower = memory[pc_offset_one_byte];
@@ -84,10 +84,18 @@ bitset<WORD_SIZE> Machine::next_byte_to_pc() {
     return ret;
 }
 
-void Machine::pc_to_next_instruction() {
+void Machine::advance_pc() {
     ulong temp_pc = pc.to_ulong();
     temp_pc += 2;
     pc = temp_pc;
+}
+
+bitset<WORD_SIZE> Machine::get_next_instruction() {
+    bitset<BYTE_SIZE> upper = memory[pc.to_ulong() + 2];
+    auto pc_offset_one_byte = next_byte_to_pc().to_ulong() + 2;
+    bitset<BYTE_SIZE> lower = memory[pc_offset_one_byte];
+    bitset<WORD_SIZE> ret((upper.to_ulong() << 8) + lower.to_ulong());
+    return ret;
 }
 
 void Machine::set_exit_flag() {
@@ -102,4 +110,57 @@ std::string Machine::pc_to_string() {
     std::stringstream stream;
     stream << std::setfill('0') << std::setw(4) << std::uppercase << std::hex << pc.to_ulong();
     return stream.str();
+}
+
+void Machine::incr_sp() {
+    sp += 1;
+}
+
+void Machine::dec_sp() {
+    sp -= 1;
+}
+
+bitset<WORD_SIZE> Machine::get_pc() {
+    return pc;
+}
+
+void Machine::push_to_stack(const bitset<WORD_SIZE>& addr) {
+    //CHIP-8 only allows for 16 levels of stack
+    if(sp > 15 || sp < 0) {
+        //fatal error
+        //refactor into fatal error function to perform cleanup?
+        std::cout << "too many values on the stack!" << std::endl;
+        std::exit(0);
+    } else {
+        stack[sp] = addr;
+        sp += 1;
+    }
+}
+
+bitset<WORD_SIZE> Machine::pop_off_stack() {
+    bitset<WORD_SIZE> ret(0);
+    if(sp <= 0){
+        std::cout << "error, cannot pop off stack any more!" << std::endl;
+        std::exit(0);
+    } else {
+        ret = stack[sp].to_ulong();
+        sp -= 1;
+    }
+    return ret;
+}
+
+bitset<WORD_SIZE>* Machine::get_stack() {
+    return stack;
+}
+
+int Machine::get_sp() {
+    return sp;
+}
+
+bitset<BYTE_SIZE> Machine::read_register(int reg) {
+    return general_registers[reg];
+}
+
+void Machine::set_register(int reg, int val) {
+    general_registers[reg] = val;
 }

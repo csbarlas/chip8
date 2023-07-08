@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
     if(argc == 1) {
         // ROM test_rom("../roms/pong.rom");
         // machine.load_rom(test_rom);
-        machine.pc_to_next_instruction();
+        machine.advance_pc();
     } else if (argc == 2) {
         ROM test_rom(argv[1]);
         machine.load_rom(test_rom);
