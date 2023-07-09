@@ -8,20 +8,14 @@
 Machine machine;
 
 int main(int argc, char *argv[]) {
-    machine.print_registers();
-
     if(argc == 1) {
         // ROM test_rom("../roms/pong.rom");
         // machine.load_rom(test_rom);
-        machine.advance_pc();
     } else if (argc == 2) {
         ROM test_rom(argv[1]);
         machine.load_rom(test_rom);
     } else {
         throw std::runtime_error("Unsupported number of command line arguments given.");
     }
-
-    machine.run();
-
     //machine.print_registers();
 }

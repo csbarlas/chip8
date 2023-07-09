@@ -29,7 +29,7 @@ std::string Executor::bytes_to_str(const std::bitset<16>& instr, int from, int t
     int start_pos = (3 - to) * 4;
     int ending_pos = 15 - (4 * from);
     std::string temp = instr.to_string();
-    temp = temp.substr(start_pos, ending_pos + 1);
+    temp = temp.substr(start_pos, (to - from + 1) * 4);
     stream << std::setfill('0') << std::setw((to - from) + 1) << std::uppercase << std::hex << stoi(temp, nullptr, 2);
     return stream.str();
 }
@@ -54,6 +54,9 @@ void Executor::execute(const std::bitset<16>& instr) {
             break;
         case 2:
             exec_call(instr);
+            break;
+        case 3:
+            exec_skip_equal_byte(instr);
             break;
         default:
             std::cout << "Unimplemented opcode for " << std::hex << instr.to_ulong() << std::endl;
@@ -152,6 +155,6 @@ void Executor::exec_skip_equal_byte(const std::bitset<16>& instr) {
         //skip next instr
         machine->advance_pc();
     }
-    //always advance regardless
+    //always advance at least once regardless of comparison
     machine->advance_pc();
 }

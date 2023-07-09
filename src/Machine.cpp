@@ -161,6 +161,7 @@ bitset<BYTE_SIZE> Machine::read_register(int reg) {
     return general_registers[reg];
 }
 
+// Note: For whatever reason, cannot give val as a hex value... weird...
 void Machine::set_register(int reg, int val) {
     general_registers[reg] = val;
 }

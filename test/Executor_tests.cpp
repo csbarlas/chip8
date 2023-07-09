@@ -21,3 +21,20 @@ TEST(ExecutorTest, call_test_simple) {
     auto stack = m->get_stack();
     EXPECT_EQ(std::stoi("0200", nullptr, 16), stack[0].to_ulong());
 }
+
+TEST(ExecutorTest, skip_equal_false_test_simple) {
+    Machine *m = new Machine();
+    ROM rom("../test/roms/skip_equal_test_simple.rom");
+    m->load_rom(rom);
+    m->run();
+    EXPECT_EQ(0x202, m->get_pc().to_ulong());
+}
+
+TEST(ExecutorTest, skip_equal_true_test_simple) {
+    Machine *m = new Machine();
+    ROM rom("../test/roms/skip_equal_test_simple.rom");
+    m->set_register(4, 16);
+    m->load_rom(rom);
+    m->run();
+    EXPECT_EQ(0x204, m->get_pc().to_ulong());
+}
