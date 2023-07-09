@@ -22,6 +22,10 @@ class Executor {
         void exec_jump(const std::bitset<16>& instr);
         void exec_call(const std::bitset<16>& instr);
         void exec_skip_equal_byte(const std::bitset<16>& instr);
+        void exec_skip_not_equal_byte(const std::bitset<16>& instr);
+        void exec_skip_equal_reg(const std::bitset<16>& instr);
+        void exec_load_imm(const std::bitset<16>& instr);
+        void exec_add_imm(const std::bitset<16>& instr);
 
         int bytes_to_int(const std::bitset<16>& instr, int from, int to);
         std::string bytes_to_str(const std::bitset<16>& instr, int from, int to) const; 

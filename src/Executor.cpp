@@ -58,6 +58,15 @@ void Executor::execute(const std::bitset<16>& instr) {
         case 3:
             exec_skip_equal_byte(instr);
             break;
+        case 4:
+            exec_skip_not_equal_byte(instr);
+            break;
+        case 5:
+            exec_skip_equal_reg(instr);
+            break;
+        case 6:
+            exec_load_imm(instr);
+            break;
         default:
             std::cout << "Unimplemented opcode for " << std::hex << instr.to_ulong() << std::endl;
             machine->set_exit_flag();
@@ -156,5 +165,53 @@ void Executor::exec_skip_equal_byte(const std::bitset<16>& instr) {
         machine->advance_pc();
     }
     //always advance at least once regardless of comparison
+    machine->advance_pc();
+}
+
+/*
+    Format: 4xkk
+    ASM: SNE Vx, byte
+    Desc: Skip next instruction if Vx != kk
+*/
+void Executor::exec_skip_not_equal_byte(const std::bitset<16>& instr) {
+    int reg_index = bytes_to_int(instr, 2, 2);
+    int reg_val = (int) machine->read_register(reg_index).to_ulong();
+    int byte_val = bytes_to_int(instr, 0, 1);
+    if(byte_val != reg_val) {
+        //skip next instr
+        machine->advance_pc();
+    }
+    //always advance at least once regardless of comparison
+    machine->advance_pc();
+}
+
+/*
+    Format: 5xy0
+    ASM: SE Vx, Vy
+    Desc: Skip next instruction if Vx = Vy
+*/
+void Executor::exec_skip_equal_reg(const std::bitset<16>& instr) {
+    int reg1_index = bytes_to_int(instr, 2, 2);
+    int reg2_index = bytes_to_int(instr, 1, 1);
+
+    int reg1_val = machine->read_register(reg1_index).to_ulong();
+    int reg2_val = machine->read_register(reg2_index).to_ulong();
+
+    if(reg1_val == reg2_val) {
+        machine->advance_pc();
+    }
+
+    machine->advance_pc();
+}
+
+/*
+    Format: 6xkk
+    ASM: LD Vx, byte (kk)
+    Desc: Load immediate byte into Vx
+*/
+void Executor::exec_load_imm(const std::bitset<16>& instr) {
+    int imm_val = bytes_to_int(instr, 0, 1);
+    int reg_index = bytes_to_int(instr, 2, 2);
+    machine->set_register(reg_index, imm_val);
     machine->advance_pc();
 }

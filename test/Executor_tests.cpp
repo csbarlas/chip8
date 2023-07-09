@@ -38,3 +38,50 @@ TEST(ExecutorTest, skip_equal_true_test_simple) {
     m->run();
     EXPECT_EQ(0x204, m->get_pc().to_ulong());
 }
+
+TEST(ExecutorTest, skip_not_equal_true_test_simple) {
+    Machine *m = new Machine();
+    ROM rom("../test/roms/skip_not_equal_test_simple.rom");
+    m->load_rom(rom);
+    m->run();
+    EXPECT_EQ(0x204, m->get_pc().to_ulong());
+}
+
+TEST(ExecutorTest, skip_not_equal_false_test_simple) {
+    Machine *m = new Machine();
+    m->set_register(4, 16);
+    ROM rom("../test/roms/skip_not_equal_test_simple.rom");
+    m->load_rom(rom);
+    m->run();
+    EXPECT_EQ(0x202, m->get_pc().to_ulong());
+}
+
+TEST(ExecutorTest, skip_equal_reg_true_test_simple) {
+    Machine *m = new Machine();
+    ROM rom("../test/roms/skip_equal_test_reg_simple.rom");
+    m->set_register(7, 7);
+    m->set_register(8, 7);
+    m->load_rom(rom);
+    m->run();
+    EXPECT_EQ(0x204, m->get_pc().to_ulong());
+}
+
+TEST(ExecutorTest, skip_equal_reg_false_test_simple) {
+    Machine *m = new Machine();
+    ROM rom("../test/roms/skip_equal_test_reg_simple.rom");
+    m->set_register(7, 1);
+    m->set_register(8, 2);
+    m->load_rom(rom);
+    m->run();
+    EXPECT_EQ(0x202, m->get_pc().to_ulong());
+}
+
+TEST(ExecutorTest, load_imm_test_simple) {
+    Machine *m = new Machine();
+    ROM rom("../test/roms/load_imm_test_simple.rom");
+    m->set_register(5, 20);
+    m->load_rom(rom);
+    m->run();
+    EXPECT_EQ(16, m->read_register(5).to_ulong());
+    EXPECT_EQ(0x202, m->get_pc().to_ulong());
+}
