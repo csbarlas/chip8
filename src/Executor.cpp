@@ -40,6 +40,10 @@ int Executor::bytes_to_int(const std::bitset<16>& instr, int from, int to){
     return ret;
 }
 
+int Executor::byte_to_int(const std::bitset<16>& instr, int byte) {
+    return bytes_to_int(instr, byte, byte);
+}
+
 /*
     Main execution function
 */
@@ -66,6 +70,12 @@ void Executor::execute(const std::bitset<16>& instr) {
             break;
         case 6:
             exec_load_imm(instr);
+            break;
+        case 7:
+            exec_add_imm(instr);
+            break;
+        case 8:
+            exec_opcode_eight(instr);
             break;
         default:
             std::cout << "Unimplemented opcode for " << std::hex << instr.to_ulong() << std::endl;
@@ -213,5 +223,47 @@ void Executor::exec_load_imm(const std::bitset<16>& instr) {
     int imm_val = bytes_to_int(instr, 0, 1);
     int reg_index = bytes_to_int(instr, 2, 2);
     machine->set_register(reg_index, imm_val);
+    machine->advance_pc();
+}
+
+/*
+    Format: 7xkk
+    ASM: ADD Vx, byte (kk)
+    Desc: Vx = Vx + byte (kk)
+*/
+void Executor::exec_add_imm(const std::bitset<16>& instr) {
+    int imm_val = bytes_to_int(instr, 0, 1);
+    int reg_index = bytes_to_int(instr, 2, 2);
+    int reg_val = machine->read_register(reg_index).to_ulong();
+    int result = reg_val + imm_val;
+    machine->set_register(reg_index, result);
+    machine->advance_pc();
+}
+
+/*
+    Figures out which specific exec function to call based on the 
+    last byte of the instr "selector"
+*/
+void Executor::exec_opcode_eight(const std::bitset<16>& instr) {
+    int selector = bytes_to_int(instr, 0, 0);
+    switch (selector) {
+        case 0:
+            exec_load_regs(instr);
+            break;
+        default:
+            std::cout << "error!" << std::endl;
+    }
+}
+
+/*
+    Format: 8xy0
+    ASM: LD Vx, Vy
+    Desc: Vx = Vy
+*/
+void Executor::exec_load_regs(const std::bitset<16>& instr) {
+    int source_index = byte_to_int(instr, 2);
+    int dest_index = byte_to_int(instr, 1);
+    int source_val = machine->read_register(source_index).to_ulong();
+    machine->set_register(dest_index, source_val);
     machine->advance_pc();
 }

@@ -85,3 +85,25 @@ TEST(ExecutorTest, load_imm_test_simple) {
     EXPECT_EQ(16, m->read_register(5).to_ulong());
     EXPECT_EQ(0x202, m->get_pc().to_ulong());
 }
+
+TEST(ExecutorTest, add_imm_test_simple) {
+    Machine *m = new Machine();
+    ROM rom("../test/roms/add_imm_test_simple.rom");
+    m->set_register(10, 5);
+    m->load_rom(rom);
+    m->run();
+    EXPECT_EQ(6, m->read_register(10).to_ulong());
+    EXPECT_EQ(0x202, m->get_pc().to_ulong());
+}
+
+TEST(ExecutorTest, load_regs_test_simple) {
+    Machine *m = new Machine();
+    ROM rom("../test/roms/load_regs_test_simple.rom");
+    m->set_register(1, 7);
+    m->set_register(15, 9);
+    m->load_rom(rom);
+    m->run();
+    EXPECT_EQ(7, m->read_register(15).to_ulong());
+    EXPECT_EQ(7, m->read_register(1).to_ulong());
+    EXPECT_EQ(0x202, m->get_pc().to_ulong());
+}
