@@ -107,3 +107,52 @@ TEST(ExecutorTest, load_regs_test_simple) {
     EXPECT_EQ(7, m->read_register(1).to_ulong());
     EXPECT_EQ(0x202, m->get_pc().to_ulong());
 }
+
+TEST(ExecutorTest, bitwise_or_test_simple) {
+    Machine *m = new Machine();
+    ROM rom("../test/roms/bitwise_or_test_simple.rom");
+    m->set_register(15, 15); //0x0F
+    m->set_register(1, 240); //0xF0
+    m->load_rom(rom);
+    m->run();
+    EXPECT_EQ(255, m->read_register(15).to_ulong());
+    EXPECT_EQ(240, m->read_register(1).to_ulong());
+    EXPECT_EQ(0x202, m->get_pc().to_ulong());
+}
+
+TEST(ExecutorTest, bitwise_and_test_simple) {
+    Machine *m = new Machine();
+    ROM rom("../test/roms/bitwise_and_test_simple.rom");
+    m->set_register(15, 15); //0x0F
+    m->set_register(1, 240); //0xF0
+    m->load_rom(rom);
+    m->run();
+    EXPECT_EQ(0, m->read_register(15).to_ulong());
+    EXPECT_EQ(240, m->read_register(1).to_ulong());
+    EXPECT_EQ(0x202, m->get_pc().to_ulong());
+}
+
+TEST(ExecutorTest, bitwise_xor_test_simple) {
+    Machine *m = new Machine();
+    ROM rom("../test/roms/bitwise_xor_test_simple.rom");
+    m->set_register(15, 15); //0x0F
+    m->set_register(1, 240); //0xF0
+    m->load_rom(rom);
+    m->run();
+    EXPECT_EQ(255, m->read_register(15).to_ulong());
+    EXPECT_EQ(240, m->read_register(1).to_ulong());
+    EXPECT_EQ(0x202, m->get_pc().to_ulong());
+}
+
+TEST(ExecutorTest, add_regs_test_simple) {
+    Machine *m = new Machine();
+    ROM rom("../test/roms/add_regs_test_simple.rom");
+    m->set_register(1, 1);
+    m->set_register(14, 2);
+    m->load_rom(rom);
+    m->run();
+    EXPECT_EQ(3, m->read_register(14).to_ulong());
+    EXPECT_EQ(1, m->read_register(1).to_ulong());
+    EXPECT_EQ(0, m->read_register(15).to_ulong());
+    EXPECT_EQ(0x202, m->get_pc().to_ulong());
+}

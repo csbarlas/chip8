@@ -165,3 +165,7 @@ bitset<BYTE_SIZE> Machine::read_register(int reg) {
 void Machine::set_register(int reg, int val) {
     general_registers[reg] = val;
 }
+
+void Machine::set_register(int reg, const std::bitset<BYTE_SIZE>& val) {
+    general_registers[reg] = val;
+}

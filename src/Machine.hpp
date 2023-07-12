@@ -54,4 +54,5 @@ class Machine {
         int get_sp();
         bitset<BYTE_SIZE> read_register(int reg);
         void set_register(int reg, int val);
+        void set_register(int reg, const std::bitset<BYTE_SIZE>& val);
 };

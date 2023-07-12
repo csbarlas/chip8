@@ -250,6 +250,18 @@ void Executor::exec_opcode_eight(const std::bitset<16>& instr) {
         case 0:
             exec_load_regs(instr);
             break;
+        case 1:
+            exec_bitwise_or(instr);
+            break;
+        case 2:
+            exec_bitwise_and(instr);
+            break;
+        case 3:
+            exec_bitwise_xor(instr);
+            break;
+        case 4:
+            exec_add_regs(instr);
+            break;
         default:
             std::cout << "error!" << std::endl;
     }
@@ -265,5 +277,72 @@ void Executor::exec_load_regs(const std::bitset<16>& instr) {
     int dest_index = byte_to_int(instr, 1);
     int source_val = machine->read_register(source_index).to_ulong();
     machine->set_register(dest_index, source_val);
+    machine->advance_pc();
+}
+
+/*
+    Format: 8xy1
+    ASM: OR Vx, Vy
+    Desc: Vx = Vx | Vy (bitwise OR)
+*/
+void Executor::exec_bitwise_or(const std::bitset<16>& instr){
+    int dest_index = byte_to_int(instr, 2);
+    int src_index = byte_to_int(instr, 1);
+    auto dest_val = machine->read_register(dest_index);
+    auto src_val = machine->read_register(src_index);
+    auto result = dest_val | src_val;
+    machine->set_register(dest_index, result);
+    machine->advance_pc();
+}
+
+/*
+    Format: 8xy2
+    ASM: AND Vx, Vy
+    Desc: Vx = Vx & Vy (bitwise AND)
+*/
+void Executor::exec_bitwise_and(const std::bitset<16>& instr){
+    int vx = byte_to_int(instr, 2);
+    int vy = byte_to_int(instr, 1);
+    auto vx_val = machine->read_register(vx);
+    auto vy_val = machine->read_register(vy);
+    auto result = vx_val & vy_val;
+    machine->set_register(vx, result);
+    machine->advance_pc();
+}
+
+/*
+    Format: 8xy3
+    ASM: XOR Vx, Vy
+    Desc: Vx = Vx XOR Vy
+*/
+void Executor::exec_bitwise_xor(const std::bitset<16>& instr){
+    int vx = byte_to_int(instr, 2);
+    int vy = byte_to_int(instr, 1);
+    auto vx_val = machine->read_register(vx);
+    auto vy_val = machine->read_register(vy);
+    auto result = vx_val ^ vy_val;
+    machine->set_register(vx, result);
+    machine->advance_pc();
+}
+
+/*
+    Format: 8xy4
+    ASM: ADD Vx, Vy
+    Desc: Vx = Vx + Vy and VF gets set if there is a carry bit
+*/
+void Executor::exec_add_regs(const std::bitset<16>& instr){
+    int vx = byte_to_int(instr, 2);
+    int vy = byte_to_int(instr, 1);
+    int vx_val = machine->read_register(vx).to_ulong();
+    int vy_val = machine->read_register(vy).to_ulong();
+    std::bitset<BYTE_SIZE + 1> result(vx_val + vy_val);
+    if (result.test(8)) {
+        machine->set_register(15, 1);
+    } else {
+        machine->set_register(15, 0);
+    }
+    std::bitset<BYTE_SIZE + 1> mask(255);
+    result = result & mask;
+    machine->set_register(vx, result.to_ulong());
     machine->advance_pc();
 }

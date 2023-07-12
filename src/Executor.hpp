@@ -28,6 +28,10 @@ class Executor {
         void exec_add_imm(const std::bitset<16>& instr);
         void exec_opcode_eight(const std::bitset<16>& instr);
         void exec_load_regs(const std::bitset<16>& instr);
+        void exec_bitwise_or(const std::bitset<16>& instr);
+        void exec_bitwise_and(const std::bitset<16>& instr);
+        void exec_bitwise_xor(const std::bitset<16>& instr);
+        void exec_add_regs(const std::bitset<16>& instr);
 
         int bytes_to_int(const std::bitset<16>& instr, int from, int to);
         int byte_to_int(const std::bitset<16>& instr, int byte);
