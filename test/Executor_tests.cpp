@@ -156,3 +156,17 @@ TEST(ExecutorTest, add_regs_test_simple) {
     EXPECT_EQ(0, m->read_register(15).to_ulong());
     EXPECT_EQ(0x202, m->get_pc().to_ulong());
 }
+
+TEST(ExecutorTest, subtract_regs_test_simple){
+    Machine *m = new Machine();
+    ROM rom("../test/roms/subtract_regs_test_simple.rom");
+    m->set_register(15, 10);
+    m->set_register(14, 14);
+    m->set_register(1, 7);
+    m->load_rom(rom);
+    m->run();
+    EXPECT_EQ(7, m->read_register(14).to_ulong());
+    EXPECT_EQ(7, m->read_register(1).to_ulong());
+    EXPECT_EQ(1, m->read_register(15).to_ulong());
+    EXPECT_EQ(0x202, m->get_pc().to_ulong());
+}

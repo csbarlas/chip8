@@ -262,6 +262,9 @@ void Executor::exec_opcode_eight(const std::bitset<16>& instr) {
         case 4:
             exec_add_regs(instr);
             break;
+        case 5:
+            exec_sub_regs(instr);
+            break;
         default:
             std::cout << "error!" << std::endl;
     }
@@ -344,5 +347,24 @@ void Executor::exec_add_regs(const std::bitset<16>& instr){
     std::bitset<BYTE_SIZE + 1> mask(255);
     result = result & mask;
     machine->set_register(vx, result.to_ulong());
+    machine->advance_pc();
+}
+
+/*
+    Format: 8xy5
+    ASM: SUB Vx, Vy
+    Desc: Vx = Vx - Vy and VF = NOT borrow
+*/
+void Executor::exec_sub_regs(const std::bitset<16>& instr) {
+    int vx = byte_to_int(instr, 2);
+    int vy = byte_to_int(instr, 1);
+    int vx_val = machine->read_register(vx).to_ulong();
+    int vy_val = machine->read_register(vy).to_ulong();
+    if (vx_val > vy_val) {
+        machine->set_register(15, 1);
+    } else {
+        machine->set_register(15, 0);
+    }
+    machine->set_register(vx, vx_val - vy_val);
     machine->advance_pc();
 }
