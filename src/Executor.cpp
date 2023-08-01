@@ -265,6 +265,15 @@ void Executor::exec_opcode_eight(const std::bitset<16>& instr) {
         case 5:
             exec_sub_regs(instr);
             break;
+        case 6:
+            exec_shift_r(instr);
+            break;
+        case 7:
+            exec_sub_regs_flipped(instr);
+            break;
+        case 14:
+            exec_shift_l(instr);
+            break;
         default:
             std::cout << "error!" << std::endl;
     }
@@ -366,5 +375,61 @@ void Executor::exec_sub_regs(const std::bitset<16>& instr) {
         machine->set_register(15, 0);
     }
     machine->set_register(vx, vx_val - vy_val);
+    machine->advance_pc();
+}
+
+/*
+    Format: 8xy6
+    ASM: SHR Vx (Vy not used?)
+    Desc: Shift Vx right by one, set VF to LSb
+*/
+void Executor::exec_shift_r(const std::bitset<16>& instr) {
+    int vx = byte_to_int(instr, 2);
+    auto vx_bitset = machine->read_register(vx);
+    if (vx_bitset.test(0)) {
+        machine->set_register(15, 1);
+    } else {
+        machine->set_register(15, 0);
+    }
+    vx_bitset = vx_bitset >> 1;
+    machine->set_register(vx, vx_bitset);
+    machine->advance_pc();
+}
+
+/*
+    Format: 8xy7
+    ASM: SUBN Vx, Vy
+    Desc: Vx = Vy - Vx and Vf = NOT borrow
+*/
+void Executor::exec_sub_regs_flipped(const std::bitset<16>& instr) {
+    int vx = byte_to_int(instr, 2);
+    int vy = byte_to_int(instr, 1);
+    int vx_val = machine->read_register(vx).to_ulong();
+    int vy_val = machine->read_register(vy).to_ulong();
+    if (vy_val > vx_val) {
+        machine->set_register(15, 1);
+    } else {
+        machine->set_register(15, 0);
+    }
+    machine->set_register(vx, vy_val - vx_val);
+    machine->advance_pc();
+}
+
+
+/*
+    Format: 8xyE
+    ASM: SHL Vx (Vy not used)
+    Desc: Vx = Vx SHL 1, VF = MSb
+*/
+void Executor::exec_shift_l(const std::bitset<16>& instr) {
+    int vx = byte_to_int(instr, 2);
+    auto vx_bitset = machine->read_register(vx);
+    if (vx_bitset.test(7)) {
+        machine->set_register(15, 1);
+    } else {
+        machine->set_register(15, 0);
+    }
+    vx_bitset = vx_bitset << 1;
+    machine->set_register(vx, vx_bitset);
     machine->advance_pc();
 }

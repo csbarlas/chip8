@@ -170,3 +170,64 @@ TEST(ExecutorTest, subtract_regs_test_simple){
     EXPECT_EQ(1, m->read_register(15).to_ulong());
     EXPECT_EQ(0x202, m->get_pc().to_ulong());
 }
+
+TEST(ExecutorTest, shift_r_test_simple_bit_out) {
+    Machine *m = new Machine();
+    ROM rom("../test/roms/shift_r_test_simple.rom");
+    m->set_register(1, 7);
+    m->set_register(15, 7);
+    m->load_rom(rom);
+    m->run();
+    EXPECT_EQ(0x202, m->get_pc().to_ulong());
+    EXPECT_EQ(3, m->read_register(1).to_ulong());
+    EXPECT_EQ(1, m->read_register(15).to_ulong());
+}
+
+TEST(ExecutorTest, shift_r_test_simple_no_bit_out) {
+    Machine *m = new Machine();
+    ROM rom("../test/roms/shift_r_test_simple.rom");
+    m->set_register(1, 6);
+    m->set_register(15, 7);
+    m->load_rom(rom);
+    m->run();
+    EXPECT_EQ(0x202, m->get_pc().to_ulong());
+    EXPECT_EQ(3, m->read_register(1).to_ulong());
+    EXPECT_EQ(0, m->read_register(15).to_ulong());
+}
+
+TEST(ExecutorTest, subn_test_simple) {
+    Machine *m = new Machine();
+    ROM rom("../test/roms/subn_test_simple.rom");
+    m->set_register(1, 6);
+    m->set_register(7, 7);
+    m->set_register(15, 7);
+    m->load_rom(rom);
+    m->run();
+    EXPECT_EQ(0x202, m->get_pc().to_ulong());
+    EXPECT_EQ(1, m->read_register(1).to_ulong());
+    EXPECT_EQ(1, m->read_register(15).to_ulong());
+}
+
+TEST(ExecutorTest, shl_test_msb_set) {
+    Machine *m = new Machine();
+    ROM rom("../test/roms/shl_test_simple.rom");
+    m->set_register(1, 128);
+    m->set_register(15, 7);
+    m->load_rom(rom);
+    m->run();
+    EXPECT_EQ(0x202, m->get_pc().to_ulong());
+    EXPECT_EQ(0, m->read_register(1).to_ulong());
+    EXPECT_EQ(1, m->read_register(15).to_ulong());
+}
+
+TEST(ExecutorTest, shl_test_simple) {
+    Machine *m = new Machine();
+    ROM rom("../test/roms/shl_test_simple.rom");
+    m->set_register(1, 4);
+    m->set_register(15, 7);
+    m->load_rom(rom);
+    m->run();
+    EXPECT_EQ(0x202, m->get_pc().to_ulong());
+    EXPECT_EQ(8, m->read_register(1).to_ulong());
+    EXPECT_EQ(0, m->read_register(15).to_ulong());
+}
