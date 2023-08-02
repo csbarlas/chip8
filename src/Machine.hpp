@@ -55,4 +55,11 @@ class Machine {
         bitset<BYTE_SIZE> read_register(int reg);
         void set_register(int reg, int val);
         void set_register(int reg, const std::bitset<BYTE_SIZE>& val);
+        void set_vi(const std::bitset<WORD_SIZE>& val);
+        void set_vi(int val);
+        std::bitset<WORD_SIZE> get_vi();
+        std::bitset<BYTE_SIZE> get_dt();
+        void set_dt(int val);
+        std::bitset<BYTE_SIZE> get_st();
+        void set_st(int val);
 };

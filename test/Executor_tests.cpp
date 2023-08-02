@@ -231,3 +231,108 @@ TEST(ExecutorTest, shl_test_simple) {
     EXPECT_EQ(8, m->read_register(1).to_ulong());
     EXPECT_EQ(0, m->read_register(15).to_ulong());
 }
+
+TEST(ExecutorTest, skip_not_eq_test_true) {
+    Machine *m = new Machine();
+    ROM rom("../test/roms/skip_not_eq_test_simple.rom");
+    m->set_register(4, 1);
+    m->set_register(5, 0);
+    m->load_rom(rom);
+    m->run();
+    EXPECT_EQ(0x204, m->get_pc().to_ulong());
+    EXPECT_EQ(1, m->read_register(4).to_ulong());
+    EXPECT_EQ(0, m->read_register(5).to_ulong());
+}
+
+TEST(ExecutorTest, skip_not_eq_test_false) {
+    Machine *m = new Machine();
+    ROM rom("../test/roms/skip_not_eq_test_simple.rom");
+    m->set_register(4, 1);
+    m->set_register(5, 1);
+    m->load_rom(rom);
+    m->run();
+    EXPECT_EQ(0x202, m->get_pc().to_ulong());
+    EXPECT_EQ(1, m->read_register(4).to_ulong());
+    EXPECT_EQ(1, m->read_register(5).to_ulong());
+}
+
+TEST(ExecutorTest, load_addr_test_simple) {
+    Machine *m = new Machine();
+    ROM rom("../test/roms/load_addr_test_simple.rom");
+    m->load_rom(rom);
+    EXPECT_EQ(0, m->get_vi().to_ulong());
+    m->run();
+    EXPECT_EQ(0x202, m->get_pc().to_ulong());
+    EXPECT_EQ(0xFF, m->get_vi().to_ulong());
+}
+
+TEST(ExecutorTest, jump_reg_offset_test_simple) {
+    Machine *m = new Machine();
+    ROM rom("../test/roms/jump_reg_offset_test_simple.rom");
+    m->set_register(0, 255);
+    m->load_rom(rom);
+    m->run();
+    EXPECT_EQ(255 + 10, m->get_pc().to_ulong());
+    EXPECT_EQ(255, m->read_register(0).to_ulong());
+}
+
+/*
+    Hang on... we can't possibly know what the random number is going to be
+    Maybe come back and provide a seed?
+*/
+// TEST(ExecutorTest, random_test_simple) {
+//     Machine *m = new Machine();
+//     ROM rom("../test/roms/random_test_simple.rom");
+//     m->set_register(13, 85);
+//     m->load_rom(rom);
+//     m->run();
+//     EXPECT_EQ(0x202, m->get_pc().to_ulong());
+//     EXPECT_EQ(255, m->read_register(0).to_ulong());
+// }
+
+TEST(ExecutorTest, load_dt_to_vx_test_simple) {
+    Machine *m = new Machine();
+    ROM rom("../test/roms/load_dt_to_vx_test_simple.rom");
+    m->set_dt(60);
+    m->load_rom(rom);
+    m->run();
+    EXPECT_EQ(0x202, m->get_pc().to_ulong());
+    EXPECT_EQ(60, m->get_dt().to_ulong());
+    EXPECT_EQ(60, m->read_register(10).to_ulong());
+}
+
+TEST(ExecutorTest, load_vx_to_dt_test_simple) {
+    Machine *m = new Machine();
+    ROM rom("../test/roms/set_dt_reg_test_simple.rom");
+    m->set_dt(60);
+    m->set_register(3, 30);
+    m->load_rom(rom);
+    m->run();
+    EXPECT_EQ(0x202, m->get_pc().to_ulong());
+    EXPECT_EQ(30, m->get_dt().to_ulong());
+    EXPECT_EQ(30, m->read_register(3).to_ulong());
+}
+
+TEST(ExecutorTest, load_vx_to_st_test_simple) {
+    Machine *m = new Machine();
+    ROM rom("../test/roms/set_st_reg_test_simple.rom");
+    m->set_st(60);
+    m->set_register(11, 30);
+    m->load_rom(rom);
+    m->run();
+    EXPECT_EQ(0x202, m->get_pc().to_ulong());
+    EXPECT_EQ(30, m->get_st().to_ulong());
+    EXPECT_EQ(30, m->read_register(11).to_ulong());
+}
+
+TEST(ExecutorTest, add_vi_test_simple) {
+    Machine *m = new Machine();
+    ROM rom("../test/roms/add_vi_test_simple.rom");
+    m->load_rom(rom);
+    m->set_vi(768);
+    m->set_register(9, 16);
+    m->run();
+    EXPECT_EQ(0x202, m->get_pc().to_ulong());
+    EXPECT_EQ(0x310, m->get_vi().to_ulong());
+    EXPECT_EQ(16, m->read_register(9).to_ulong());
+}

@@ -7,6 +7,7 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include <stdlib.h>
 
 #include "Executor.hpp"
 #include "Machine.hpp"
@@ -76,6 +77,27 @@ void Executor::execute(const std::bitset<16>& instr) {
             break;
         case 8:
             exec_opcode_eight(instr);
+            break;
+        case 9:
+            exec_skip_next_instr(instr);
+            break;
+        case 10:
+            exec_load_addr(instr);
+            break;
+        case 11:
+            exec_jump_reg_offset(instr);
+            break;
+        case 12:
+            exec_random(instr);
+            break;
+        case 13:
+            exec_draw(instr);
+            break;
+        case 14:
+            exec_e_opcodes(instr);
+            break;
+        case 15:
+            exec_f_opcodes(instr);
             break;
         default:
             std::cout << "Unimplemented opcode for " << std::hex << instr.to_ulong() << std::endl;
@@ -433,3 +455,192 @@ void Executor::exec_shift_l(const std::bitset<16>& instr) {
     machine->set_register(vx, vx_bitset);
     machine->advance_pc();
 }
+
+/*
+    Format: 9xy0
+    ASM: SNE Vx, Vy
+    Desc: If Vx != Vy then PC += 2
+*/
+void Executor::exec_skip_next_instr(const std::bitset<16>& instr) {
+    int vx = byte_to_int(instr, 2);
+    int vy = byte_to_int(instr, 1);
+    int vx_val = machine->read_register(vx).to_ulong();
+    int vy_val = machine->read_register(vy).to_ulong();
+    if (vx_val != vy_val ) {
+        machine->advance_pc();
+    }
+    machine->advance_pc();
+}
+
+/*
+    Format: Annn
+    ASM: LD I, addr
+    Desc: VI = nnn
+*/
+void Executor::exec_load_addr(const std::bitset<16>& instr) {
+    int addr = bytes_to_int(instr, 0, 2);
+    std::bitset<WORD_SIZE> addr_bitset(addr);
+    machine->set_vi(addr_bitset);
+    machine->advance_pc();
+}
+
+/*
+    Format: Bnnn
+    ASM: JP V0, addr
+    Desc: PC = V0 + addr
+*/
+void Executor::exec_jump_reg_offset(const std::bitset<16>& instr) {
+    int addr = bytes_to_int(instr, 0, 2);
+    int v0_val = machine->read_register(0).to_ulong();
+    int final_addr = addr + v0_val;
+    machine->set_pc(final_addr);
+}
+
+/*
+    Format: Cxkk
+    ASM: RND Vx, byte
+    Desc: Vx = (random byte value) & byte (kk)
+*/
+void Executor::exec_random(const std::bitset<16>& instr) {
+    int vx = byte_to_int(instr, 2);
+    int instr_byte = bytes_to_int(instr, 0, 1);
+    bitset<BYTE_SIZE> instr_byte_bitset(instr_byte);
+    bitset<BYTE_SIZE> random_byte(rand() % 256);
+    auto vx_val_bitset = machine->read_register(vx);
+    auto result = random_byte & vx_val_bitset;
+    machine->set_register(vx, result);
+    machine->advance_pc();
+}
+
+/*
+    Format: Dxyn 
+    ASM: DRW Vx, Vy, nibble
+    Desc: Draws nibble length sprite located at VI at (Vx, Vy) on screen
+          First checks bit mask, then checks bit status at location.
+          If already set, set VF = collision YES
+*/
+void Executor::exec_draw(const std::bitset<16>& instr) {
+    //TODO When SDL is working
+}
+
+//Switcher function
+void Executor::exec_e_opcodes(const std::bitset<16>& instr) {
+    int last_byte = byte_to_int(instr, 0);
+    if(last_byte == 1) {
+
+    } else if (last_byte == 0xE) {
+        exec_skip_key_pressed(instr);
+    } else {
+        //error
+    }
+}
+
+/*
+    Format: Ex9E
+    ASM: SKP Vx
+    Desc: If key of value Vx is pressed, PC += 2
+*/
+void Executor::exec_skip_key_pressed(const std::bitset<16>& instr) {
+    //TODO When SDL is working
+}
+
+/*
+    Format: ExA1
+    ASM: SKNP Vx
+    Desc: If key of value Vx is not currently pressed, PC += 2
+*/
+void Executor::exec_skip_key_not_pressed(const std::bitset<16>& instr) {
+    //TODO When SDL is working
+}
+
+//Switcher function
+void Executor::exec_f_opcodes(const std::bitset<16>& instr) {
+    int last_two_bytes = bytes_to_int(instr, 0, 1);
+    switch (last_two_bytes) {
+        case 0x07:
+            exec_load_dt_reg(instr);
+            break;
+        case 0x0A:
+            exec_wait_key_press(instr);
+            break;
+        case 0x15:
+            exec_set_dt(instr);
+            break;
+        case 0x18:
+            exec_set_st(instr);
+            break;
+        case 0x1E:
+            exec_add_vi(instr);
+            break;
+        case 0x29:
+            break;
+        case 0x33:
+            break;
+        case 0x55:
+            break;
+        case 0x65:
+            break;
+    }
+}
+
+/*
+    Format: Fx07
+    ASM: LD Vx, DT
+    Desc: Vx = DT 
+*/
+void Executor::exec_load_dt_reg(const std::bitset<16>& instr) {
+    int vx = byte_to_int(instr, 2);
+    auto dt = machine->get_dt();
+    machine->set_register(vx, dt);
+    machine->advance_pc();
+}
+
+
+/*
+    Format: Fx0A
+    ASM: LD Vx, K
+    Desc: Vx = K 
+*/
+void Executor::exec_wait_key_press(const std::bitset<16>& instr) {
+    int vx = byte_to_int(instr, 2);
+    //TODO When SDL is working
+}
+
+/*
+    Format: Fx15
+    ASM: LD DT, Vx
+    Desc: DT = Vx
+*/
+void Executor::exec_set_dt(const std::bitset<16>& instr) {
+    int vx = byte_to_int(instr, 2);
+    int vx_val = machine->read_register(vx).to_ulong();
+    machine->set_dt(vx_val);
+    machine->advance_pc();
+}
+
+/*
+    Format: Fx18
+    ASM: LD ST, Vx
+    Desc: ST = Vx
+*/
+void Executor::exec_set_st(const std::bitset<16>& instr) {
+    int vx = byte_to_int(instr, 2);
+    int vx_val = machine->read_register(vx).to_ulong();
+    machine->set_st(vx_val);
+    machine->advance_pc();
+}
+
+/*
+    Format: Fx1E
+    ASM: ADD I, Vx
+    Desc: VI = VI + Vx
+*/
+void Executor::exec_add_vi(const std::bitset<16>& instr) {
+    int vx = byte_to_int(instr, 2);
+    int vx_val = machine->read_register(vx).to_ulong();
+    int vi_val = machine->get_vi().to_ulong();
+    machine->set_vi(vx_val + vi_val);
+    machine->advance_pc();
+}
+
+

@@ -36,6 +36,20 @@ class Executor {
         void exec_shift_r(const std::bitset<16>& instr);
         void exec_sub_regs_flipped(const std::bitset<16>& instr);
         void exec_shift_l(const std::bitset<16>& instr);
+        void exec_skip_next_instr(const std::bitset<16>& instr);
+        void exec_load_addr(const std::bitset<16>& instr);
+        void exec_jump_reg_offset(const std::bitset<16>& instr);
+        void exec_random(const std::bitset<16>& instr);
+        void exec_draw(const std::bitset<16>& instr);
+        void exec_e_opcodes(const std::bitset<16>& instr);
+        void exec_skip_key_pressed(const std::bitset<16>& instr);
+        void exec_skip_key_not_pressed(const std::bitset<16>& instr);
+        void exec_f_opcodes(const std::bitset<16>& instr);
+        void exec_load_dt_reg(const std::bitset<16>& instr);
+        void exec_wait_key_press(const std::bitset<16>& instr);
+        void exec_set_dt(const std::bitset<16>& instr);
+        void exec_set_st(const std::bitset<16>& instr);
+        void exec_add_vi(const std::bitset<16>& instr);
 
         int bytes_to_int(const std::bitset<16>& instr, int from, int to);
         int byte_to_int(const std::bitset<16>& instr, int byte);

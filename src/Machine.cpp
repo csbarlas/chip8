@@ -57,6 +57,7 @@ void Machine::load_rom(ROM &rom) {
     pc = 0x200;
     exit = false;
     sp = 0;
+    vi = 0;
 }
 
 void Machine::run(){
@@ -168,4 +169,32 @@ void Machine::set_register(int reg, int val) {
 
 void Machine::set_register(int reg, const std::bitset<BYTE_SIZE>& val) {
     general_registers[reg] = val;
+}
+
+void Machine::set_vi(const std::bitset<WORD_SIZE>& val) {
+    vi = val;
+}
+
+void Machine::set_vi(int val) {
+    vi = val;
+}
+
+std::bitset<WORD_SIZE> Machine::get_vi() {
+    return vi;
+}
+
+std::bitset<BYTE_SIZE> Machine::get_dt() {
+    return delay_timer;
+}
+
+void Machine::set_dt(int val) {
+    delay_timer = val;
+}
+
+std::bitset<BYTE_SIZE> Machine::get_st() {
+    return sound_timer;
+}
+
+void Machine::set_st(int val) {
+    sound_timer = val;
 }
