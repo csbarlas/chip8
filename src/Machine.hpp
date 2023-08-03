@@ -2,6 +2,7 @@
 #include <bitset>
 
 #include "ROM.hpp"
+#include "Display.hpp"
 
 #define MEMORY_SIZE 4096
 #define NUM_REGISTERS 16
@@ -62,4 +63,6 @@ class Machine {
         void set_dt(int val);
         std::bitset<BYTE_SIZE> get_st();
         void set_st(int val);
+        Display display;
+        std::bitset<BYTE_SIZE> get_byte(int addr);
 };

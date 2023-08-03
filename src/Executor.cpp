@@ -520,7 +520,29 @@ void Executor::exec_random(const std::bitset<16>& instr) {
           If already set, set VF = collision YES
 */
 void Executor::exec_draw(const std::bitset<16>& instr) {
-    //TODO When SDL is working
+    int length = byte_to_int(instr, 0);
+    int vx = byte_to_int(instr, 2);
+    int vy = byte_to_int(instr, 1);
+    int x = machine->read_register(vx).to_ulong();
+    int y = machine->read_register(vy).to_ulong();
+    int vi = machine->get_vi().to_ulong();
+    int current_byte = 0;
+    while(current_byte < length) {
+        int local_x = x;
+        std::bitset<BYTE_SIZE> curr_bitset = machine->get_byte(vi);
+        for(int i = 0; i < BYTE_SIZE; i++) {
+            //test bitmask
+            if(curr_bitset.test(i)) {
+                //if bitmask is set
+                machine->display.drawPixel(x, y);
+            }
+            local_x++;
+        }
+        vi++;
+        y++;
+        current_byte++;
+    }
+    machine->advance_pc();
 }
 
 //Switcher function
