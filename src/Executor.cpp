@@ -573,12 +573,16 @@ void Executor::exec_f_opcodes(const std::bitset<16>& instr) {
             exec_add_vi(instr);
             break;
         case 0x29:
+            throw std::runtime_error("Did not implement Fx29");
             break;
         case 0x33:
+            throw std::runtime_error("Did not implement Fx33");
             break;
         case 0x55:
+            throw std::runtime_error("Did not implement Fx55");
             break;
         case 0x65:
+            throw std::runtime_error("Did not implement Fx65");
             break;
     }
 }
