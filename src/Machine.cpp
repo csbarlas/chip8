@@ -4,6 +4,7 @@
 #include <bitset>
 #include <iomanip>
 #include <sstream>
+#include <unistd.h>
 
 using namespace std;
 
@@ -58,6 +59,7 @@ void Machine::load_rom(ROM &rom) {
     exit = false;
     sp = 0;
     vi = 0;
+    print_memory();
 }
 
 void Machine::run(){
@@ -66,6 +68,10 @@ void Machine::run(){
         auto currentInstruction = get_current_instruction();
         std::cout << "now executing: " << std::setfill('0') << std::setw(4) << std::uppercase << std::hex << currentInstruction.to_ulong() << std::endl;
         executor->execute(currentInstruction);
+        // std::cout << "waiting for step..." << std::endl;
+        // while (getchar() != 'n') {
+        //     sleep(1);
+        // }
     }
 
     std::cout << "exiting..." << std::endl;

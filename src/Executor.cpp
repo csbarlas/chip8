@@ -135,7 +135,7 @@ void Executor::exec_subroutine(const std::bitset<16>& instr) {
     Desc: Clear the graphics display
 */
 void Executor::exec_clear_screen(const std::bitset<16>& instr) {
-    std::cout << "hello from clear screen!" << std::endl;
+    machine->display.clear();
     machine->advance_pc();
 }
 
@@ -168,6 +168,7 @@ void Executor::exec_exit(const std::bitset<16>& instr){
 void Executor::exec_jump(const std::bitset<16>& instr){
     std::cout << "hello from jump!" << std::endl;
     int addr = bytes_to_int(instr, 0, 2);
+    std::cout << "setting pc to (decimal): " << addr << std::endl;
     machine->set_pc(addr);
 }
 
@@ -293,6 +294,10 @@ void Executor::exec_opcode_eight(const std::bitset<16>& instr) {
         case 7:
             exec_sub_regs_flipped(instr);
             break;
+        // ?
+        // case 13:
+        //     exec_draw(instr);
+        //     break;
         case 14:
             exec_shift_l(instr);
             break;
@@ -532,9 +537,9 @@ void Executor::exec_draw(const std::bitset<16>& instr) {
         std::bitset<BYTE_SIZE> curr_bitset = machine->get_byte(vi);
         for(int i = 0; i < BYTE_SIZE; i++) {
             //test bitmask
-            if(curr_bitset.test(i)) {
+            if(curr_bitset.test(7 - i)) {
                 //if bitmask is set
-                machine->display.drawPixel(x, y);
+                machine->display.drawPixelToBuffer(local_x, y);
             }
             local_x++;
         }
@@ -543,6 +548,7 @@ void Executor::exec_draw(const std::bitset<16>& instr) {
         current_byte++;
     }
     machine->advance_pc();
+    machine->display.renderBuffer();
 }
 
 //Switcher function

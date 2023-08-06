@@ -14,7 +14,6 @@ void Display::init() {
 void Display::test() {
     SDL_RenderDrawPoint(renderer, 0, 0);
     SDL_RenderDrawPoint(renderer, 63, 31);
-
     SDL_RenderPresent(renderer);
 }
 
@@ -24,9 +23,18 @@ void Display::teardown() {
     SDL_Quit();
 }
 
-void Display::drawPixel(int x, int y) {
+void Display::drawPixelToBuffer(int x, int y) {
+    std::pair<int, int> tempPair(x, y);
+    points.push_back(tempPair);
+}
+
+void Display::renderBuffer() {
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+    SDL_RenderClear(renderer);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
-    SDL_RenderDrawPoint(renderer, x, y);
+    for (auto point : points) {
+        SDL_RenderDrawPoint(renderer, point.first, point.second);    
+    }
     SDL_RenderPresent(renderer);
 }
 
@@ -34,4 +42,5 @@ void Display::clear() {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(renderer);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
+    points.clear();
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SDL2/SDL.h>
+#include <vector>
 
 class Display {
     public:
@@ -8,9 +9,11 @@ class Display {
         void init();
         void test();
         void teardown();
-        void drawPixel(int x, int y);
+        void drawPixelToBuffer(int x, int y);
         void clear();
+        void renderBuffer();
     private:
         SDL_Window* window;
         SDL_Renderer* renderer;
+        std::vector<std::pair<int, int>> points;
 };
