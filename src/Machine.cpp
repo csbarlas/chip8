@@ -4,6 +4,7 @@
 #include <bitset>
 #include <iomanip>
 #include <sstream>
+#include <unistd.h>
 
 using namespace std;
 
@@ -58,16 +59,23 @@ void Machine::load_rom(ROM &rom) {
     exit = false;
     sp = 0;
     vi = 0;
+    print_memory();
 }
 
 void Machine::run(){
+    display.init();
     while (!exit) {
         auto currentInstruction = get_current_instruction();
         std::cout << "now executing: " << std::setfill('0') << std::setw(4) << std::uppercase << std::hex << currentInstruction.to_ulong() << std::endl;
         executor->execute(currentInstruction);
+        // std::cout << "waiting for step..." << std::endl;
+        // while (getchar() != 'n') {
+        //     sleep(1);
+        // }
     }
 
     std::cout << "exiting..." << std::endl;
+    display.teardown();
 }
 
 bitset<WORD_SIZE> Machine::get_current_instruction() {
@@ -197,4 +205,8 @@ std::bitset<BYTE_SIZE> Machine::get_st() {
 
 void Machine::set_st(int val) {
     sound_timer = val;
+}
+
+std::bitset<BYTE_SIZE> Machine::get_byte(int addr) {
+    return memory[addr];
 }
